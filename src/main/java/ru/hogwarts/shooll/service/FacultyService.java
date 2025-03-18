@@ -6,7 +6,6 @@ import ru.hogwarts.shooll.repository.FacultyRepository;
 
 import java.util.*;
 
-
 @Service
 public class FacultyService {
 
@@ -36,5 +35,4 @@ public class FacultyService {
     public List<Faculty> findByColor(String color) {
         return facultyRepository.findByColor(color);
     }
-
 }

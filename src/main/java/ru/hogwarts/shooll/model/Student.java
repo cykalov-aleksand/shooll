@@ -6,7 +6,6 @@ import jakarta.persistence.Id;
 
 import java.util.Objects;
 
-
 @Entity
 public class Student {
     @Id
@@ -71,4 +70,5 @@ public class Student {
     public void setAge(int age) {
         this.age = age;
     }
+
 }
