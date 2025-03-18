@@ -23,7 +23,6 @@ public class FacultyController {
         return ResponseEntity.ok(facultyService.findFacultyAll());
     }
 
-
     @GetMapping("{id}")
     public ResponseEntity<Faculty> getFacultyInfo(@PathVariable Long id) {
         Faculty faculty = facultyService.findFaculty(id);
