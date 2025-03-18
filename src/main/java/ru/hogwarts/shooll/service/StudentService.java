@@ -7,7 +7,6 @@ import ru.hogwarts.shooll.repository.StudentRepository;
 import java.util.Collection;
 import java.util.List;
 
-
 @Service
 public class StudentService {
 
