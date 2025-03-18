@@ -1,11 +1,22 @@
 package ru.hogwarts.shooll.model;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+
 import java.util.Objects;
 
+
+@Entity
 public class Student {
+    @Id
+    @GeneratedValue
     private long id;
     private String name;
     private int age;
+
+    public Student() {
+    }
 
     public Student(long id, String name, int age) {
         this.id = id;
@@ -14,10 +25,12 @@ public class Student {
     }
 
     @Override
-    public boolean equals(Object object) {
-        if (this == object) return true;
-        if (object == null || getClass() != object.getClass()) return false;
-        Student student = (Student) object;
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        Student student = (Student) o;
         return id == student.id && age == student.age && Objects.equals(name, student.name);
     }
 
