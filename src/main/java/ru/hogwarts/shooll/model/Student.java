@@ -1,8 +1,7 @@
 package ru.hogwarts.shooll.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 
 import java.util.Objects;
 
@@ -10,9 +9,13 @@ import java.util.Objects;
 public class Student {
     @Id
     @GeneratedValue
+
     private long id;
     private String name;
     private int age;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "faculty_id")
+    private Faculty faculty;
 
     public Student() {
     }
@@ -24,18 +27,16 @@ public class Student {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
-        Student student = (Student) o;
-        return id == student.id && age == student.age && Objects.equals(name, student.name);
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (object == null || getClass() != object.getClass()) return false;
+        Student student = (Student) object;
+        return id == student.id && age == student.age && Objects.equals(name, student.name) && Objects.equals(faculty, student.faculty);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, age);
+        return Objects.hash(id, name, age, faculty);
     }
 
     @Override
@@ -71,4 +72,12 @@ public class Student {
         this.age = age;
     }
 
+    public Faculty getFaculty() {
+        return faculty;
+    }
+
+    @JsonIgnore
+    public void setFaculty(Faculty faculty) {
+        this.faculty = faculty;
+    }
 }

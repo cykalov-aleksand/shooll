@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import ru.hogwarts.shooll.model.Student;
 import ru.hogwarts.shooll.repository.StudentRepository;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -32,7 +33,30 @@ public class StudentService {
         studentRepository.deleteById(id);
     }
 
-    public List<Student> findByAge(int age) {
+    public Collection<Student> findByAge(int age) {
         return studentRepository.findByAge(age);
+    }
+
+   public Collection<Student> findByAgeGreatThen(int age) {
+        return studentRepository.findByAgeGreaterThan(age);
+    }
+
+    public Collection<Student> findByAgeBetween(int min, int max) {
+        if(max==0){
+            return findStudentAll();
+        }
+        if(max==min) {
+            return findByAge(max);
+        }
+        List<Student> between = new ArrayList<>();
+        for (Student value : findByAgeGreatThen(min)) {
+            if (value.getAge() <= max) {
+                between.add(value);
+           }
+       }
+        return between;
+    }
+    public String getFacultyId(long studentId){
+        return findStudent(studentId).getFaculty().getName();
     }
 }
