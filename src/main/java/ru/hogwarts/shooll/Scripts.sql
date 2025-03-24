@@ -1,14 +1,13 @@
-select * from student
-where age>=20 and age<=23
+SELECT * FROM student
+WHERE age BETWEEN 20 AND 23
 
-select name from student
+SELECT name FROM student
 
-select * from student
-where name like '%а%'
+SELECT * FROM student
+WHERE name LIKE '%а%'
 
-select*from student
-where age<20
+SELECT * FROM  student
+WHERE age < 20
 
-select * from student
-order by age 
-
+SELECT * FROM student
+ORDER BY age ASC

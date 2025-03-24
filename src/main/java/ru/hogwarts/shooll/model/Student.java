@@ -15,15 +15,16 @@ public class Student {
     private int age;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "faculty_id")
-    private Faculty faculty;
+   private Faculty faculty;
 
     public Student() {
     }
 
-    public Student(long id, String name, int age) {
+    public Student(long id, String name, int age, Faculty faculty) {
         this.id = id;
         this.name = name;
         this.age = age;
+        this.faculty = faculty;
     }
 
     @Override
@@ -31,12 +32,12 @@ public class Student {
         if (this == object) return true;
         if (object == null || getClass() != object.getClass()) return false;
         Student student = (Student) object;
-        return id == student.id && age == student.age && Objects.equals(name, student.name) && Objects.equals(faculty, student.faculty);
+        return id == student.id && age == student.age && Objects.equals(name, student.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, age, faculty);
+        return Objects.hash(id, name, age);
     }
 
     @Override
