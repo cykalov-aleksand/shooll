@@ -1,5 +1,7 @@
 package ru.hogwarts.shooll.controller;
 
+
+
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -58,8 +60,8 @@ public class FacultyController {
 
     @GetMapping("/color")
     @Operation(summary = "Проводим поиск факультета по названию или цвету")
-    public ResponseEntity<Collection<Faculty>> findFaculties(@RequestParam(required = false) String name,
-                                                             @RequestParam(required = false) String color) {
+    public ResponseEntity<Collection<Faculty>> findFacultyOrColor(@RequestParam(required = false) String name,
+                                                                  @RequestParam(required = false) String color) {
         if ((name != null && !name.isBlank()) || (color != null && !color.isBlank())) {
             return ResponseEntity.ok(facultyService.findByNameOrColor(name, color));
         }
