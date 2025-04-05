@@ -14,7 +14,6 @@ import ru.hogwarts.shooll.controller.FacultyController;
 import ru.hogwarts.shooll.model.Faculty;
 import ru.hogwarts.shooll.model.Student;
 
-
 import java.util.Collection;
 import java.util.Objects;
 
@@ -37,18 +36,18 @@ public class FacultyControllerTest {
     }
 
     @Test
-    void createFacultyTest()throws Exception {
+    void createFacultyTest() throws Exception {
         Faculty dataSqlWrite = startTest();
-        ResponseEntity<Faculty> dataSqlRead = testRestTemplate.getForEntity(baseUrl+port+"/faculty/{id}", Faculty.class,
+        ResponseEntity<Faculty> dataSqlRead = testRestTemplate.getForEntity(baseUrl + port + "/faculty/{id}", Faculty.class,
                 Objects.requireNonNull(dataSqlWrite).getId());
         Assertions.assertThat(dataSqlRead.getStatusCode()).isIn(HttpStatus.OK);
         assertThat(Objects.requireNonNull(dataSqlRead.getBody()).getName()).isEqualTo(dataSqlWrite.getName());
         assertThat(Objects.requireNonNull(dataSqlRead.getBody()).getColor()).isEqualTo(dataSqlWrite.getColor());
-        testRestTemplate.delete(baseUrl+port+"/faculty/{id}", dataSqlWrite.getId());
+        testRestTemplate.delete(baseUrl + port + "/faculty/{id}", dataSqlWrite.getId());
     }
 
     @Test
-    void editFacultyTest() throws Exception{
+    void editFacultyTest() throws Exception {
         Faculty faculty = new Faculty();
         faculty.setName("TEST");
         faculty.setColor("TEST color");
@@ -57,75 +56,75 @@ public class FacultyControllerTest {
         faculty.setId(dataSqlWrite.getId());
         faculty.setName("sdjfsdlfj");
         faculty.setColor("белый");
-        testRestTemplate.put(baseUrl+port+"/faculty", faculty);
-        ResponseEntity<Faculty> dataSqlRead = testRestTemplate.getForEntity(baseUrl+port+"/faculty/{id}",
+        testRestTemplate.put(baseUrl + port + "/faculty", faculty);
+        ResponseEntity<Faculty> dataSqlRead = testRestTemplate.getForEntity(baseUrl + port + "/faculty/{id}",
                 Faculty.class, dataSqlWrite.getId());
         Assertions.assertThat(dataSqlRead.getStatusCode()).isIn(HttpStatus.OK);
         assertThat(dataSqlRead.getBody().getId()).isEqualTo(dataSqlWrite.getId());
         assertThat(dataSqlRead.getBody().getName()).isNotEqualTo(dataSqlWrite.getName());
         assertThat(dataSqlRead.getBody().getColor()).isNotEqualTo(dataSqlWrite.getColor());
-        testRestTemplate.delete(baseUrl+port+"/faculty/{id}", dataSqlWrite.getId());
+        testRestTemplate.delete(baseUrl + port + "/faculty/{id}", dataSqlWrite.getId());
     }
 
     @Test
-    void deleteFacultyTest() throws Exception{
+    void deleteFacultyTest() throws Exception {
         Faculty dataSqlWrite = startTest();
         long idDelete = dataSqlWrite.getId();
-        testRestTemplate.delete(baseUrl+port+"/faculty/{id}", dataSqlWrite.getId());
+        testRestTemplate.delete(baseUrl + port + "/faculty/{id}", dataSqlWrite.getId());
         ResponseEntity<Faculty> dataSqlRead = testRestTemplate
-                .getForEntity(baseUrl+port+"/faculty/{id}", Faculty.class, idDelete);
+                .getForEntity(baseUrl + port + "/faculty/{id}", Faculty.class, idDelete);
         Assertions.assertThat(dataSqlRead.getStatusCode()).isNotEqualTo(HttpStatus.OK);
-        testRestTemplate.delete(baseUrl+port+"/faculty/{id}", dataSqlWrite.getId());
+        testRestTemplate.delete(baseUrl + port + "/faculty/{id}", dataSqlWrite.getId());
     }
 
     @Test
-    void getFacultyInfoTest() throws Exception{
+    void getFacultyInfoTest() throws Exception {
         Faculty dataSqlWrite = startTest();
-        ResponseEntity<Collection<Faculty>> dataSqlRead = testRestTemplate.exchange(baseUrl+port+"/faculty",
+        ResponseEntity<Collection<Faculty>> dataSqlRead = testRestTemplate.exchange(baseUrl + port + "/faculty",
                 HttpMethod.GET, null, new ParameterizedTypeReference<>() {
                 });
         Collection<Faculty> facultys = dataSqlRead.getBody();
         Assertions.assertThat(facultys).isNotNull();
-        testRestTemplate.delete(baseUrl+port+"/faculty/{id}", dataSqlWrite.getId());
+        testRestTemplate.delete(baseUrl + port + "/faculty/{id}", dataSqlWrite.getId());
     }
 
     @Test
-    void getFacultyInfoIdTest() throws Exception{
+    void getFacultyInfoIdTest() throws Exception {
         Faculty dataSqlWrite = startTest();
         long idRead = dataSqlWrite.getId();
         ResponseEntity<Faculty> dataSqlRead = testRestTemplate
-                .getForEntity(baseUrl+port+"/faculty/{id}", Faculty.class, idRead);
+                .getForEntity(baseUrl + port + "/faculty/{id}", Faculty.class, idRead);
         Assertions.assertThat(dataSqlRead.getStatusCode()).isIn(HttpStatus.OK);
         assertThat(Objects.requireNonNull(dataSqlRead.getBody()).getId()).isEqualTo(dataSqlWrite.getId());
         assertThat(Objects.requireNonNull(dataSqlRead.getBody()).getName()).isEqualTo(dataSqlWrite.getName());
         assertThat(Objects.requireNonNull(dataSqlRead.getBody()).getColor()).isEqualTo(dataSqlWrite.getColor());
-        testRestTemplate.delete(baseUrl+port+"/faculty/{id}", dataSqlWrite.getId());
+        testRestTemplate.delete(baseUrl + port + "/faculty/{id}", dataSqlWrite.getId());
     }
 
     @Test
-    void findFacultyOrColorTest() throws Exception{
+    void findFacultyOrColorTest() throws Exception {
         Faculty dataSqlWrite = startTest();
         ResponseEntity<Collection<Faculty>> dataSqlRead = testRestTemplate
-                .exchange(baseUrl+port+"/faculty/color?name=" + "TEST" + "&color=" + "красный",
+                .exchange(baseUrl + port + "/faculty/color?name=" + "TEST" + "&color=" + "красный",
                         HttpMethod.GET, null, new ParameterizedTypeReference<>() {
                         });
         Collection<Faculty> persons = dataSqlRead.getBody();
         Assertions.assertThat(persons).contains(dataSqlWrite);
-        testRestTemplate.delete(baseUrl+port+"/faculty/{id}", dataSqlWrite.getId());
+        testRestTemplate.delete(baseUrl + port + "/faculty/{id}", dataSqlWrite.getId());
     }
 
     @Test
-    void getListStudentTest() throws Exception{
+    void getListStudentTest() throws Exception {
         ResponseEntity<Collection<Student>> dataSqlRead = testRestTemplate
-                .exchange(baseUrl+port+"/faculty/faculty/" + "физмат",
-                HttpMethod.GET, null, new ParameterizedTypeReference<>() {
-                });
+                .exchange(baseUrl + port + "/faculty/faculty/" + "физмат",
+                        HttpMethod.GET, null, new ParameterizedTypeReference<>() {
+                        });
         Assertions.assertThat(dataSqlRead.getStatusCode()).isIn(HttpStatus.OK);
         Collection<Student> persons = dataSqlRead.getBody();
         Assertions.assertThat(persons).isNotEmpty();
     }
 
-    Faculty startTest() throws Exception{
+    Faculty startTest() throws Exception {
         Faculty faculty = new Faculty();
         faculty.setName("TEST");
         faculty.setColor("TEST color");
