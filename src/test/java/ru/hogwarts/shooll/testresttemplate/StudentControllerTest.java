@@ -111,7 +111,7 @@ public class StudentControllerTest {
         testRestTemplate.delete(baseUrl + port + "/student/{id}", dataSqlWrite.getId());
     }
 
-    Student startTest() throws Exception{
+    Student startTest() {
         Student student = new Student();
         student.setName("TEST");
         student.setAge(1111);

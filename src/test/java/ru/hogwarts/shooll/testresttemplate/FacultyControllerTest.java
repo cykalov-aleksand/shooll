@@ -124,7 +124,7 @@ public class FacultyControllerTest {
         Assertions.assertThat(persons).isNotEmpty();
     }
 
-    Faculty startTest() throws Exception {
+    Faculty startTest() {
         Faculty faculty = new Faculty();
         faculty.setName("TEST");
         faculty.setColor("TEST color");
