@@ -97,6 +97,18 @@ public class StudentControllerTest {
                 .andExpect(jsonPath("$.length()").value(2));
     }
     @Test
+    public void getStudentInfoTest1()throws Exception{
+        List<Student> students = testObject();
+        int min=0;
+        int max=0;
+        when(studentRepository.findAll()).thenReturn(students);
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/student?min=" + min + "&max=" + max)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(jsonPath("$.length()").value(4));
+    }
+    @Test
     public void getStudentInfoIdTest()throws Exception{
         List<Student> students = testObject();
         when(studentRepository.findById(any(Long.class))).thenReturn(Optional.of(testObject().get(0)));

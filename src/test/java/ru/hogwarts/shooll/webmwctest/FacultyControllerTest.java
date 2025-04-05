@@ -104,7 +104,8 @@ public class FacultyControllerTest {
         List<Faculty> faculties = testObject();
         String name = "Программирование";
         String color = "Красный";
-        when(facultyRepository.findByNameIgnoreCaseOrColorIgnoreCase(name, color)).thenReturn(List.of(faculties.get(0), faculties.get(1)));
+        when(facultyRepository.findByNameIgnoreCaseOrColorIgnoreCase(name, color))
+                .thenReturn(List.of(faculties.get(0), faculties.get(1)));
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/faculty/color?name=" + name + "&color=" + color)
                         .accept(MediaType.APPLICATION_JSON))
@@ -131,8 +132,11 @@ public class FacultyControllerTest {
                         .get("/faculty/faculty/" + faculties.get(0).getName())
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
-                .andExpect(jsonPath("$.length()").value(3));
-    }
+                .andExpect(jsonPath("$.length()").value(3))
+                .andExpect(jsonPath("$[0].id").value(faculties.get(0).getStudents().get(0).getId()))
+                .andExpect(jsonPath("$[0].name").value(faculties.get(0).getStudents().get(0).getName()))
+                .andExpect(jsonPath("$[0].age").value(faculties.get(0).getStudents().get(0).getAge()));
+                  }
 
     private List<Faculty> testObject() {
         Faculty faculty = new Faculty(1L, "Исторический", "красный");
