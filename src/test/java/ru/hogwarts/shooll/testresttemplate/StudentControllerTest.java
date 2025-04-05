@@ -38,7 +38,8 @@ public class StudentControllerTest {
     @Test
     public void getTestStudentInfoAge() throws Exception {
         Student dataSqlWrite = startTest();
-        ResponseEntity<Collection<Student>> person = testRestTemplate.exchange(baseUrl + port + "/student?min=" + 1110 + "&max=" + 1112,
+        ResponseEntity<Collection<Student>> person = testRestTemplate
+                .exchange(baseUrl + port + "/student?min=" + 1110 + "&max=" + 1112,
                 HttpMethod.GET, null, new ParameterizedTypeReference<>() {
                 });
         Collection<Student> persons = person.getBody();
@@ -50,7 +51,8 @@ public class StudentControllerTest {
     @Test
     public void getStudentInfoIdTest() throws Exception {
         Student dataSqlWrite = startTest();
-        ResponseEntity<Student> student = testRestTemplate.getForEntity(baseUrl + port + "/student/{id}", Student.class, dataSqlWrite.getId());
+        ResponseEntity<Student> student = testRestTemplate
+                .getForEntity(baseUrl + port + "/student/{id}", Student.class, dataSqlWrite.getId());
         Assertions.assertThat(student.getStatusCode()).isIn(HttpStatus.OK);
         assertThat(Objects.requireNonNull(student.getBody()).getName()).isEqualTo(dataSqlWrite.getName());
         assertThat(Objects.requireNonNull(student.getBody()).getAge()).isEqualTo(dataSqlWrite.getAge());
@@ -59,7 +61,8 @@ public class StudentControllerTest {
 
     @Test
     public void getStudentFacultyIdTest() throws Exception {
-        ResponseEntity<String> faculty = testRestTemplate.getForEntity(baseUrl + port + "/student/faculty/{studentId}", String.class, 1L);
+        ResponseEntity<String> faculty = testRestTemplate
+                .getForEntity(baseUrl + port + "/student/faculty/{studentId}", String.class, 1L);
         Assertions.assertThat(faculty.getStatusCode()).isIn(HttpStatus.OK);
         assertThat((faculty.getBody())).isEqualTo("физмат");
     }
@@ -67,7 +70,8 @@ public class StudentControllerTest {
     @Test
     public void createStudentTest() throws Exception{
         Student dataSqlWrite = startTest();
-        ResponseEntity<Student> dataSqlRead = testRestTemplate.getForEntity(baseUrl + port + "/student/{id}", Student.class, dataSqlWrite.getId());
+        ResponseEntity<Student> dataSqlRead = testRestTemplate
+                .getForEntity(baseUrl + port + "/student/{id}", Student.class, dataSqlWrite.getId());
         Assertions.assertThat(dataSqlRead.getStatusCode()).isIn(HttpStatus.OK);
         assertThat(Objects.requireNonNull(dataSqlRead.getBody()).getName()).isEqualTo(dataSqlWrite.getName());
         assertThat(Objects.requireNonNull(dataSqlRead.getBody()).getAge()).isEqualTo(dataSqlWrite.getAge());
@@ -79,7 +83,8 @@ public class StudentControllerTest {
         Student dataSqlWrite = startTest();
         long id = dataSqlWrite.getAge();
         testRestTemplate.delete(baseUrl + port + "/student/{id}", dataSqlWrite.getId());
-        ResponseEntity<Student> student1 = testRestTemplate.getForEntity(baseUrl + port + "/student/{id}", Student.class, id);
+        ResponseEntity<Student> student1 = testRestTemplate
+                .getForEntity(baseUrl + port + "/student/{id}", Student.class, id);
         Assertions.assertThat(student1.getStatusCode()).isNotEqualTo(HttpStatus.OK);
     }
 
@@ -88,7 +93,8 @@ public class StudentControllerTest {
         Student student = new Student();
         student.setName("TEST");
         student.setAge(1111);
-        Student dataSqlWrite = testRestTemplate.postForEntity(baseUrl + port + "/student", student, Student.class).getBody();
+        Student dataSqlWrite = testRestTemplate
+                .postForEntity(baseUrl + port + "/student", student, Student.class).getBody();
         String name = dataSqlWrite.getName();
         int age = dataSqlWrite.getAge();
         long id = dataSqlWrite.getId();
@@ -96,7 +102,8 @@ public class StudentControllerTest {
         student.setName("sdjfsdlfj");
         student.setAge(5464);
         testRestTemplate.put(baseUrl + port + "/student", student);
-        ResponseEntity<Student> dataSqlRead = testRestTemplate.getForEntity(baseUrl + port + "/student/{id}", Student.class, id);
+        ResponseEntity<Student> dataSqlRead = testRestTemplate
+                .getForEntity(baseUrl + port + "/student/{id}", Student.class, id);
         Assertions.assertThat(dataSqlRead.getStatusCode()).isIn(HttpStatus.OK);
         assertThat(dataSqlRead.getBody().getId()).isEqualTo(id);
         assertThat(dataSqlRead.getBody().getName()).isNotEqualTo(name);

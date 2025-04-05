@@ -72,7 +72,8 @@ public class FacultyControllerTest {
         Faculty dataSqlWrite = startTest();
         long idDelete = dataSqlWrite.getId();
         testRestTemplate.delete(baseUrl+port+"/faculty/{id}", dataSqlWrite.getId());
-        ResponseEntity<Faculty> dataSqlRead = testRestTemplate.getForEntity(baseUrl+port+"/faculty/{id}", Faculty.class, idDelete);
+        ResponseEntity<Faculty> dataSqlRead = testRestTemplate
+                .getForEntity(baseUrl+port+"/faculty/{id}", Faculty.class, idDelete);
         Assertions.assertThat(dataSqlRead.getStatusCode()).isNotEqualTo(HttpStatus.OK);
         testRestTemplate.delete(baseUrl+port+"/faculty/{id}", dataSqlWrite.getId());
     }
@@ -92,7 +93,8 @@ public class FacultyControllerTest {
     void getFacultyInfoIdTest() throws Exception{
         Faculty dataSqlWrite = startTest();
         long idRead = dataSqlWrite.getId();
-        ResponseEntity<Faculty> dataSqlRead = testRestTemplate.getForEntity(baseUrl+port+"/faculty/{id}", Faculty.class, idRead);
+        ResponseEntity<Faculty> dataSqlRead = testRestTemplate
+                .getForEntity(baseUrl+port+"/faculty/{id}", Faculty.class, idRead);
         Assertions.assertThat(dataSqlRead.getStatusCode()).isIn(HttpStatus.OK);
         assertThat(Objects.requireNonNull(dataSqlRead.getBody()).getId()).isEqualTo(dataSqlWrite.getId());
         assertThat(Objects.requireNonNull(dataSqlRead.getBody()).getName()).isEqualTo(dataSqlWrite.getName());
@@ -114,7 +116,8 @@ public class FacultyControllerTest {
 
     @Test
     void getListStudentTest() throws Exception{
-        ResponseEntity<Collection<Student>> dataSqlRead = testRestTemplate.exchange(baseUrl+port+"/faculty/faculty/" + "физмат",
+        ResponseEntity<Collection<Student>> dataSqlRead = testRestTemplate
+                .exchange(baseUrl+port+"/faculty/faculty/" + "физмат",
                 HttpMethod.GET, null, new ParameterizedTypeReference<>() {
                 });
         Assertions.assertThat(dataSqlRead.getStatusCode()).isIn(HttpStatus.OK);
