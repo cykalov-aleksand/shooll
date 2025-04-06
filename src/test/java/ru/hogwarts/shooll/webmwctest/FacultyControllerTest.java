@@ -148,4 +148,5 @@ public class FacultyControllerTest {
         faculty.setStudents(List.of(student1, student2, student3));
         return List.of(faculty, faculty1, faculty2);
     }
+
 }
