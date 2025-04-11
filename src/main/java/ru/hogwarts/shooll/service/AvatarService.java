@@ -83,6 +83,12 @@ public class AvatarService {
     }
 
     public Collection<EntityListAvatar> getFindAvatarAll(int page, int size) {
+        if (page < 1) {
+            page = 1;
+        }
+        if (size < 1) {
+            size = 1;
+        }
         PageRequest pageRequest = PageRequest.of(page - 1, size);
         return avatarRepository.listAvatar(pageRequest);
     }

@@ -74,20 +74,20 @@ public class StudentController {
 
     @GetMapping("/count")
     @Operation(summary = "Получаем количество студентов в школе")
-    public ResponseEntity<Integer> getCount() {
-        return ResponseEntity.ok(studentService.getCount());
+    public Integer getCount() {
+        return studentService.getCount();
     }
 
     @GetMapping("/avgAge")
     @Operation(summary = "Получаем средний возраст студентов в школе")
-    public ResponseEntity<Float> getAvrAge() {
-        return ResponseEntity.ok(studentService.getAvrAge());
+    public float getAvrAge() {
+        return studentService.getAvrAge();
     }
 
     @GetMapping("/getPage")
     @Operation(summary = "Выводим данные по последним 5 студентам")
-    public ResponseEntity<Collection<EntityLastPage>> getStudentPage() {
-        return ResponseEntity.ok(studentService.getLastPage());
+    public Collection<EntityLastPage> getStudentPage() {
+        return studentService.getLastPage();
     }
 
 }

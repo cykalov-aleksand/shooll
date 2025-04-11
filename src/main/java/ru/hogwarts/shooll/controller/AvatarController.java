@@ -68,15 +68,9 @@ public class AvatarController {
 
     @GetMapping("/printPage")
     @Operation(summary = "Пагинация для AvatarService")
-    public ResponseEntity<Collection<EntityListAvatar>> getAvatarInfo(@RequestParam(defaultValue = "1") int page,
-                                                                      @RequestParam(defaultValue = "1") int size) {
-        if (page < 1) {
-            page = 1;
-        }
-        if (size < 1) {
-            size = 1;
-        }
-        return ResponseEntity.ok(avatarService.getFindAvatarAll(page, size));
+    public Collection<EntityListAvatar> getAvatarInfo(@RequestParam(defaultValue = "1") int page,
+                                                      @RequestParam(defaultValue = "1") int size) {
+        return avatarService.getFindAvatarAll(page, size);
     }
 }
 
