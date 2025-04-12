@@ -80,7 +80,7 @@ public class StudentController {
 
     @GetMapping("/avgAge")
     @Operation(summary = "Получаем средний возраст студентов в школе")
-    public float getAvrAge() {
+    public double getAvrAge() {
         return studentService.getAvrAge();
     }
 

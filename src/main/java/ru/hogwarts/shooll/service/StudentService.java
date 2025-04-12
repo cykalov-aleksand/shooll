@@ -69,7 +69,7 @@ public class StudentService {
         return studentRepository.getCount();
     }
 
-    public float getAvrAge() {
+    public double getAvrAge() {
         return studentRepository.getAvrAge();
     }
 

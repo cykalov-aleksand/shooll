@@ -24,8 +24,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(StudentController.class)
 public class StudentControllerTest {
@@ -134,12 +133,35 @@ public class StudentControllerTest {
                 .andExpect(status().isOk())
                 .toString().equals(stringFaculti);
     }
+    @Test
+    public void getCountTest()throws Exception {
+        when(studentRepository.getCount()).thenReturn(6);
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/student/count")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+         .andExpect(content().string("6"));
+    }
+    @Test
+    public void getAvrAgeTest()throws Exception {
+        when(studentRepository.getAvrAge()).thenReturn(6.5d);
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/student/avgAge")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().string("6.5"));
+    }
+
     private List<Student> testObject() {
         Faculty faculty = new Faculty(1L, "Исторический", "красный");
         Student student1 = new Student(1L, "Александр", 25, faculty);
         Student student2 = new Student(2L, "Василий", 30, faculty);
         Student student3 = new Student(3L, "Надежда", 25, faculty);
         Student student4=new Student(4L,"Светлана",30,null);
+        Student student5 = new Student(5L, "Надежда", 25, faculty);
+        Student student6=new Student(6L,"Светлана",30,null);
         faculty.setStudents(List.of(student1, student2, student3));
         return List.of(student1, student2, student3,student4);
     }
