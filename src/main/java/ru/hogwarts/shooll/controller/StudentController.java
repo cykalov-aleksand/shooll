@@ -1,11 +1,10 @@
 package ru.hogwarts.shooll.controller;
 
 
-
-
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.hogwarts.shooll.entity.EntityLastPage;
 import ru.hogwarts.shooll.model.Student;
 import ru.hogwarts.shooll.service.StudentService;
 
@@ -71,6 +70,24 @@ public class StudentController {
     @Operation(summary = "Получаем факультет студента по указанному id")
     public ResponseEntity<String> getFaculty(@PathVariable long studentId) {
         return ResponseEntity.ok(studentService.getFacultyId(studentId));
+    }
+
+    @GetMapping("/count")
+    @Operation(summary = "Получаем количество студентов в школе")
+    public Integer getCount() {
+        return studentService.getCount();
+    }
+
+    @GetMapping("/avgAge")
+    @Operation(summary = "Получаем средний возраст студентов в школе")
+    public double getAvrAge() {
+        return studentService.getAvrAge();
+    }
+
+    @GetMapping("/getPage")
+    @Operation(summary = "Выводим данные по последним 5 студентам")
+    public Collection<EntityLastPage> getStudentPage() {
+        return studentService.getLastPage();
     }
 
 }

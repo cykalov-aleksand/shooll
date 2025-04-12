@@ -1,9 +1,11 @@
 package ru.hogwarts.shooll.service;
 
 import org.springframework.stereotype.Service;
+import ru.hogwarts.shooll.entity.EntityLastPage;
 import ru.hogwarts.shooll.model.Student;
 import ru.hogwarts.shooll.repository.AvatarRepository;
 import ru.hogwarts.shooll.repository.StudentRepository;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -44,10 +46,10 @@ public class StudentService {
     }
 
     public Collection<Student> findByAgeBetween(int min, int max) {
-        if(max==0){
+        if (max == 0) {
             return findStudentAll();
         }
-        if(max==min) {
+        if (max == min) {
             return findByAge(max);
         }
         List<Student> between = new ArrayList<>();
@@ -58,7 +60,20 @@ public class StudentService {
         }
         return between;
     }
-    public String getFacultyId(long studentId){
+
+    public String getFacultyId(long studentId) {
         return findStudent(studentId).getFaculty().getName();
+    }
+
+    public Integer getCount() {
+        return studentRepository.getCount();
+    }
+
+    public double getAvrAge() {
+        return studentRepository.getAvrAge();
+    }
+
+    public Collection<EntityLastPage> getLastPage() {
+        return studentRepository.lastPage();
     }
 }
