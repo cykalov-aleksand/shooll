@@ -1,5 +1,5 @@
 CREATE TABLE human ( 
-    id SERIAL PRIMARY key,
+    id SERIAL NOT NULL PRIMARY key,
     name TEXT NOT NULL,
     age INTEGER NOT NULL,
     rights BOOLEAN NOT NULL DEFAULT 'false',
@@ -7,7 +7,7 @@ CREATE TABLE human (
 );
 
 CREATE TABLE car ( 
-    individ_number_car TEXT PRIMARY key,
+    individ_number_car TEXT NOT NULL PRIMARY key,
     stamp TEXT NOT NULL,
     model TEXT NOT NULL,
     costCar INTEGER
