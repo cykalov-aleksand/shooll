@@ -40,8 +40,8 @@ public class StudentControllerTest {
         Student dataSqlWrite = startTest();
         ResponseEntity<Collection<Student>> person = testRestTemplate
                 .exchange(baseUrl + port + "/student?min=" + 1110 + "&max=" + 1112,
-                HttpMethod.GET, null, new ParameterizedTypeReference<>() {
-                });
+                        HttpMethod.GET, null, new ParameterizedTypeReference<>() {
+                        });
         Collection<Student> persons = person.getBody();
         Assertions.assertThat(persons).isNotNull();
         Assertions.assertThat(persons).contains(dataSqlWrite);
@@ -68,7 +68,7 @@ public class StudentControllerTest {
     }
 
     @Test
-    public void createStudentTest() throws Exception{
+    public void createStudentTest() throws Exception {
         Student dataSqlWrite = startTest();
         ResponseEntity<Student> dataSqlRead = testRestTemplate
                 .getForEntity(baseUrl + port + "/student/{id}", Student.class, dataSqlWrite.getId());
@@ -79,7 +79,7 @@ public class StudentControllerTest {
     }
 
     @Test
-    public void deleteStudentTest()throws Exception {
+    public void deleteStudentTest() throws Exception {
         Student dataSqlWrite = startTest();
         long id = dataSqlWrite.getAge();
         testRestTemplate.delete(baseUrl + port + "/student/{id}", dataSqlWrite.getId());
@@ -89,7 +89,7 @@ public class StudentControllerTest {
     }
 
     @Test
-    public void editStudentTest() throws Exception{
+    public void editStudentTest() throws Exception {
         Student student = new Student();
         student.setName("TEST");
         student.setAge(1111);
@@ -109,6 +109,18 @@ public class StudentControllerTest {
         assertThat(dataSqlRead.getBody().getName()).isNotEqualTo(name);
         assertThat(dataSqlRead.getBody().getAge()).isNotEqualTo(age);
         testRestTemplate.delete(baseUrl + port + "/student/{id}", dataSqlWrite.getId());
+    }
+
+    @Test
+    public void getCountTest() throws Exception {
+        Integer count = testRestTemplate.getForObject(baseUrl + port + "/student/count", Integer.class);
+        assertThat(count).isEqualTo(2);
+    }
+
+    @Test
+    public void getAvrAgeTest() throws Exception {
+        double avrAge = testRestTemplate.getForObject(baseUrl + port + "/student/avgAge", Double.class);
+        assertThat(avrAge).isEqualTo(35.5);
     }
 
     Student startTest() {
