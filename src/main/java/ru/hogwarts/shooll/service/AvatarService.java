@@ -40,7 +40,8 @@ public class AvatarService {
     public void uploadAvatar(long studentId, MultipartFile file) throws IOException {
         Student student = studentService.findStudent(studentId);
         Path filePath = Path.of(coversDir, studentId + "." + getExtension(file.getOriginalFilename()));
-        logger.info("Был вызван метод привязки картинки {} в БД к ID студента - {}", file.getOriginalFilename(), studentId);
+        logger.info("Был вызван метод привязки картинки {} в БД к ID студента - {} - (uploadAvatar({}, {}))",
+                file.getOriginalFilename(), studentId,studentId,file.getOriginalFilename());
         Files.createDirectories(filePath.getParent());
         Files.deleteIfExists(filePath);
         try (InputStream is = file.getInputStream();
@@ -61,12 +62,12 @@ public class AvatarService {
 
     public Avatar findStudentAvatar(Long studentId) {
         logger.debug("Был вызван метод поиска наличия студента по id {}, в случае отсутствия " +
-                "создания нового объекта в таблице Avatar", studentId);
+                "создания нового объекта в таблице Avatar - (getExtension({}))", studentId,studentId);
         return avatarRepository.findByStudentId(studentId).orElse(new Avatar());
     }
 
     private String getExtension(String fileName) {
-        logger.debug("Был вызван метод возврата подстроки расширения принятого файла {}", fileName);
+        logger.debug("Был вызван метод возврата подстроки расширения принятого файла {} - (getExtension({}))", fileName,fileName);
         return fileName.substring(fileName.lastIndexOf(".") + 1);
     }
 
@@ -88,7 +89,7 @@ public class AvatarService {
     }
 
     public Avatar findAvatar(long studentId) {
-        logger.info("Был вызван метод поиска avatar по ID студента. ID={}", studentId);
+        logger.info("Был вызван метод поиска avatar по ID студента. ID={} - (findAvatar({}))", studentId,studentId);
         return avatarRepository.findByStudentId(studentId).orElseThrow();
     }
 
@@ -100,7 +101,7 @@ public class AvatarService {
             size = 1;
         }
         logger.info("Был вызван метод проведения пагинации данных аватар, по странице {}, " +
-                "с выводимым количеством аватар равным {}", page, size);
+                "с выводимым количеством аватар равным {} - (getFindAvatarAll({}, {}))", page, size,page,size);
         PageRequest pageRequest = PageRequest.of(page - 1, size);
         return avatarRepository.listAvatar(pageRequest);
     }
