@@ -4,6 +4,7 @@ package ru.hogwarts.shooll.testresttemplate;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
@@ -11,6 +12,8 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 import ru.hogwarts.shooll.controller.StudentController;
 import ru.hogwarts.shooll.model.Student;
 
@@ -18,7 +21,7 @@ import java.util.Collection;
 import java.util.Objects;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-
+@ActiveProfiles(value = "test")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class StudentControllerTest {
     @LocalServerPort
@@ -28,7 +31,6 @@ public class StudentControllerTest {
     @Autowired
     private TestRestTemplate testRestTemplate;
     String baseUrl = "http://localhost:";
-    //HttpHeaders headers = new HttpHeaders();
 
     @Test
     void contextLoad() throws Exception {
@@ -105,16 +107,16 @@ public class StudentControllerTest {
         ResponseEntity<Student> dataSqlRead = testRestTemplate
                 .getForEntity(baseUrl + port + "/student/{id}", Student.class, id);
         Assertions.assertThat(dataSqlRead.getStatusCode()).isIn(HttpStatus.OK);
-        assertThat(dataSqlRead.getBody().getId()).isEqualTo(id);
+        assertThat(Objects.requireNonNull(dataSqlRead.getBody()).getId()).isEqualTo(id);
         assertThat(dataSqlRead.getBody().getName()).isNotEqualTo(name);
         assertThat(dataSqlRead.getBody().getAge()).isNotEqualTo(age);
         testRestTemplate.delete(baseUrl + port + "/student/{id}", dataSqlWrite.getId());
     }
 
     @Test
-    public void getCountTest() throws Exception {
-        Integer count = testRestTemplate.getForObject(baseUrl + port + "/student/count", Integer.class);
-        assertThat(count).isEqualTo(2);
+        public void getCountTest() throws Exception {
+       Integer count = testRestTemplate.getForObject(baseUrl + port + "/student/count", Integer.class);
+       assertThat(count).isEqualTo(2);
     }
 
     @Test

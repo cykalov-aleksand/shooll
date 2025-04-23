@@ -48,7 +48,6 @@ public class Student {
                 ", age=" + age +
                 '}';
     }
-
     public long getId() {
         return id;
     }

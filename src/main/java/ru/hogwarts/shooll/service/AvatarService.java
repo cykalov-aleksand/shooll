@@ -2,6 +2,8 @@ package ru.hogwarts.shooll.service;
 
 import jakarta.transaction.Transactional;
 import org.apache.tomcat.util.http.fileupload.ByteArrayOutputStream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -24,6 +26,7 @@ import static java.nio.file.StandardOpenOption.CREATE_NEW;
 @Transactional
 @Service
 public class AvatarService {
+    private static final Logger logger = LoggerFactory.getLogger(AvatarService.class);
     @Value("${cover.dir.path}")
     private String coversDir;
     private final AvatarRepository avatarRepository;
@@ -37,6 +40,7 @@ public class AvatarService {
     public void uploadAvatar(long studentId, MultipartFile file) throws IOException {
         Student student = studentService.findStudent(studentId);
         Path filePath = Path.of(coversDir, studentId + "." + getExtension(file.getOriginalFilename()));
+        logger.info("Был вызван метод привязки картинки {} в БД к ID студента - {}", file.getOriginalFilename(), studentId);
         Files.createDirectories(filePath.getParent());
         Files.deleteIfExists(filePath);
         try (InputStream is = file.getInputStream();
@@ -56,14 +60,19 @@ public class AvatarService {
     }
 
     public Avatar findStudentAvatar(Long studentId) {
+        logger.debug("Был вызван метод поиска наличия студента по id {}, в случае отсутствия " +
+                "создания нового объекта в таблице Avatar", studentId);
         return avatarRepository.findByStudentId(studentId).orElse(new Avatar());
     }
 
     private String getExtension(String fileName) {
+        logger.debug("Был вызван метод возврата подстроки расширения принятого файла {}", fileName);
         return fileName.substring(fileName.lastIndexOf(".") + 1);
     }
 
     private byte[] generateImagePreview(Path filepath) throws IOException {
+        logger.debug("Был вызван метод преобразования оригинальной картинки по адресу - {}, " +
+                "в формат пригодный для сохранения в БД", filepath);
         try (InputStream is = Files.newInputStream(filepath);
              BufferedInputStream bis = new BufferedInputStream(is, 1024);
              org.apache.tomcat.util.http.fileupload.ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
@@ -79,6 +88,7 @@ public class AvatarService {
     }
 
     public Avatar findAvatar(long studentId) {
+        logger.info("Был вызван метод поиска avatar по ID студента. ID={}", studentId);
         return avatarRepository.findByStudentId(studentId).orElseThrow();
     }
 
@@ -89,6 +99,8 @@ public class AvatarService {
         if (size < 1) {
             size = 1;
         }
+        logger.info("Был вызван метод проведения пагинации данных аватар, по странице {}, " +
+                "с выводимым количеством аватар равным {}", page, size);
         PageRequest pageRequest = PageRequest.of(page - 1, size);
         return avatarRepository.listAvatar(pageRequest);
     }
