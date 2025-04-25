@@ -89,6 +89,15 @@ public class StudentController {
     public Collection<EntityLastPage> getStudentPage() {
         return studentService.getLastPage();
     }
-
+    @GetMapping("/aName")
+    @Operation(summary = "Выводим отфильтрованный список имен студентов по букве A")
+    public Collection<String> filterStudentName(){
+        return studentService.aGetFilterStudentName();
+    }
+    @GetMapping("/averAge")
+    @Operation(summary = "Вычисляем средний возраст студентов из списка findAll")
+    public double getAverAge(){
+        return studentService.getAverAge();
+    }
 }
 

@@ -72,4 +72,14 @@ public class FacultyController {
     public ResponseEntity<List<Student>> getListStudent(@PathVariable(required = false) String name) {
         return ResponseEntity.ok(facultyService.getListStudent(name));
     }
+    @GetMapping("/maxLength")
+    @Operation(summary = "Выводим список названий факультетов имеющих максимальную длину")
+    public Collection<String> getMaxLength(){
+        return facultyService.getMaxNameFaculty();
+    }
+    @GetMapping("/number")
+    @Operation(summary = "тест скорости вычисления")
+    public long getSum(){
+        return facultyService.sum();
+    }
 }

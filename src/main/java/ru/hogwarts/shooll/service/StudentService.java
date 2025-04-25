@@ -10,6 +10,7 @@ import ru.hogwarts.shooll.repository.StudentRepository;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -31,12 +32,12 @@ public class StudentService {
 
     public Student addStudent(Student student) {
         logger.info("Был вызван метод добавления студента в таблицу student с характеристиками: {} - (addStudent({}))",
-                student,student);
+                student, student);
         return studentRepository.save(student);
     }
 
     public Student findStudent(long id) {
-        logger.info("Был вызван метод поиска студента в таблице student с ID:{} - (findStudent({}))", id,id);
+        logger.info("Был вызван метод поиска студента в таблице student с ID:{} - (findStudent({}))", id, id);
         return studentRepository.findById(id).get();
     }
 
@@ -44,17 +45,17 @@ public class StudentService {
         avatarRepository.deleteById(id);
         studentRepository.deleteById(id);
         logger.info("Был выполнен метод удаления студента с таблицы student  и avatar к нему с" +
-                " ID:{} - (deleteStudent({}))", id,id);
+                " ID:{} - (deleteStudent({}))", id, id);
     }
 
     public Collection<Student> findByAge(int age) {
-        logger.debug("Был вызван метод вывода списка студентов с возрастом равным - {} годам - (findByAge({}))", age,age);
+        logger.debug("Был вызван метод вывода списка студентов с возрастом равным - {} годам - (findByAge({}))", age, age);
         return studentRepository.findByAge(age);
     }
 
     public Collection<Student> findByAgeGreatThen(int age) {
         logger.debug("Был вызван метод вывода списка студентов с возрастом равным и более" +
-                " - {} годам - (findByAgeGreatThen({}))", age,age);
+                " - {} годам - (findByAgeGreatThen({}))", age, age);
         return studentRepository.findByAgeGreaterThan(age);
     }
 
@@ -72,13 +73,13 @@ public class StudentService {
             }
         }
         logger.info("Был выполнен метод вывода списка студентов с возрастом от {} и до {} лет" +
-                " - (findByAgeBetween({}, {}))", min, max,min,max);
+                " - (findByAgeBetween({}, {}))", min, max, min, max);
         return between;
     }
 
     public String getFacultyId(long studentId) {
         logger.info("Был вызван метод вывода названия факультета в котором учится студент" +
-                " с индивидуальным номером - ({}) - (getFacultyId({}))", studentId,studentId);
+                " с индивидуальным номером - ({}) - (getFacultyId({}))", studentId, studentId);
         return findStudent(studentId).getFaculty().getName();
     }
 
@@ -97,5 +98,24 @@ public class StudentService {
         logger.info("Был вызван метод вывода данные по 5 последним " +
                 "студентам находящихся в таблице student - (getLastPage())");
         return studentRepository.lastPage();
+    }
+
+    public Collection<String> aGetFilterStudentName() {
+        logger.info("Был вызван метод фильтрации по первой букве \"А\" и вывода в верхнем регистре списка студентов " +
+                " - (aGetFilterStudentName())");
+        return (studentRepository.findAll().stream().parallel()
+                .map(Student::getName).filter(name -> name.trim().startsWith("А"))
+                .map(String::toUpperCase).sorted().toList());
+    }
+
+    public double getAverAge() {
+        logger.info("Был вызван метод вычисления среднего возраста студентов в таблице student " +
+                " - getAverAge())");
+        long count = studentRepository.findAll().size();
+        if (count == 0) {
+            return 0;
+        }
+        int sum = studentRepository.findAll().stream().parallel().mapToInt(Student::getAge).sum();
+        return (double) sum / count;
     }
 }
