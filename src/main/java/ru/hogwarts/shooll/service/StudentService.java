@@ -10,6 +10,7 @@ import ru.hogwarts.shooll.repository.StudentRepository;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -97,5 +98,23 @@ public class StudentService {
         logger.info("Был вызван метод вывода данные по 5 последним " +
                 "студентам находящихся в таблице student - (getLastPage())");
         return studentRepository.lastPage();
+    }
+    public Collection<String> aGetFilterStudentName(){
+        logger.info("Был вызван метод фильтрации по первой букве \"А\" и вывода в верхнем регистре списка студентов " +
+                " - (aGetFilterStudentName())");
+        List<String>list= new ArrayList<>(studentRepository.findAll().stream().parallel()
+                .map(Student::getName).filter(name -> name.trim().startsWith("А")).map(String::toUpperCase).toList());
+        Collections.sort(list);
+        return list;
+    }
+    public double getAverAge(){
+        logger.info("Был вызван метод вычисления среднего возраста студентов в таблице student " +
+                " - getAverAge())");
+        long count= studentRepository.findAll().size();
+        if(count==0){
+            return 0;
+        }
+        int sum= studentRepository.findAll().stream().parallel().mapToInt(Student::getAge).sum();
+        return (double) sum/count;
     }
 }
