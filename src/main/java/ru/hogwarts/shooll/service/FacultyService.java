@@ -10,8 +10,7 @@ import ru.hogwarts.shooll.repository.FacultyRepository;
 
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.stream.Stream;
+import java.util.stream.LongStream;
 
 @Service
 public class FacultyService {
@@ -74,26 +73,19 @@ public class FacultyService {
 
     public long sum() {
         long startTime = System.currentTimeMillis();
-        long sum1 = Stream.iterate(1, a -> a + 1).limit(1_000_000).reduce(0, (a, b) -> a+b);
+        long sum1 = LongStream.iterate(1, a -> a + 1).limit(1_000_000).reduce(0, Long::sum);
         long endTime = System.currentTimeMillis();
         long time1 = (endTime - startTime);
-
         startTime = System.currentTimeMillis();
-        Iterator<Integer> iter = Stream.iterate(1, a -> a + 1).limit(1_000_000).iterator();
-        Spliterator<Integer> spliterator = getSpliteratorFromIterator(iter);
-        AtomicLong sum = new AtomicLong();
-        spliterator.forEachRemaining(sum::addAndGet);
-        long sum2 = sum.intValue();
+        long sum2 = 0;
+        for (int number = 1; number <= 1_000_000; number++) {
+            sum2+=number;
+        }
         endTime = System.currentTimeMillis();
         long time2 = (endTime - startTime);
-        logger.info("время отработки последовательного стрима= {} мс. Время отработки параллельного стрима= {} мс.", time1, time2);
-        logger.info(" последовательный поток sum1= {}; параллельный поток sum2= {}", sum1, sum2);
+        logger.info("время отработки последовательного стрима= {} мс. Время отработки в цикле= {} мс. ", time1, time2);
+        logger.info(" последовательный поток sum1= {}; вычисление с помощью цикла sum2= {}; ", sum1, sum2);
         return sum2;
 
-    }
-
-    public static <T> Spliterator<T> getSpliteratorFromIterator(Iterator<T> iterator) {
-        logger.debug("Метод преобразования итератора в сплитератор");
-        return Spliterators.spliteratorUnknownSize(iterator, 0);
     }
 }
