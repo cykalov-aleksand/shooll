@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>sky.hagwart</groupId>
-	<artifactId>school</artifactId>
+	<artifactId>schooll</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>school</name>
+	<name>schooll</name>
 	<description>Demo project for Spring Boot</description>
 	<url/>
 	<licenses>
@@ -30,7 +30,7 @@
 		<java.version>17</java.version>
 	</properties>
 	<dependencies>
-		<dependency>
+			<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
 			<version>42.7.5</version>
