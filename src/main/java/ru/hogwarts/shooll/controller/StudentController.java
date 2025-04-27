@@ -99,5 +99,15 @@ public class StudentController {
     public double getAverAge(){
         return studentService.getAverAge();
     }
+    @GetMapping("/print-parallel")
+    @Operation(summary = "Вывод 6 имен студентов в параллельном несинхронном режиме")
+    public String getStudentParallel(){
+        return studentService.getStudentParallel();
+    }
+    @GetMapping("/print-synchronized")
+    @Operation(summary = "Вывод 6 имен студентов в параллельном синхронном режиме")
+    public String getSynchronouslyStudents(){
+        return studentService.getSynchronouslyStudents();
+    }
 }
 

@@ -10,7 +10,6 @@ import ru.hogwarts.shooll.repository.StudentRepository;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -23,6 +22,8 @@ public class StudentService {
         this.studentRepository = studentRepository;
     }
 
+    private int count;
+    private Object flag = new Object();
     private static final Logger logger = LoggerFactory.getLogger(StudentService.class);
 
     public Collection<Student> findStudentAll() {
@@ -117,5 +118,68 @@ public class StudentService {
         }
         int sum = studentRepository.findAll().stream().parallel().mapToInt(Student::getAge).sum();
         return (double) sum / count;
+    }
+
+    public String getStudentParallel() {
+        logger.info("Был вызван метод несинхронного параллельного вывода имен 6 студентов с таблицы student в консоль" +
+                " - (getStudentParallel())");
+        count = 0;
+        outputStudentNameConsole(1, "основной поток");
+        outputStudentNameConsole(2, "основной поток");
+        new Thread(() -> {
+            outputStudentNameConsole(3, "1 поток");
+            outputStudentNameConsole(4, "1 поток");
+        }).start();
+        new Thread(() -> {
+            outputStudentNameConsole(5, "2 поток");
+            outputStudentNameConsole(6, "2 поток");
+        }).start();
+        return "Вывод в параллельном несинхронном режиме в консоль 6 имен студентов совершен";
+    }
+
+    public String getSynchronouslyStudents() {
+        logger.info("Был вызван метод синхронного параллельного вывода имен 6 студентов с таблицы student в консоль" +
+                " - (getSynchronouslyStudents())");
+        count = 0;
+        outputStudentNameConsoleSynchronously(1, "основной поток");
+        outputStudentNameConsoleSynchronously(2, "основной поток");
+        new Thread(() -> {
+            outputStudentNameConsoleSynchronously(3, "1 поток");
+            outputStudentNameConsoleSynchronously(4, "1 поток");
+        }).start();
+        new Thread(() -> {
+            outputStudentNameConsoleSynchronously(5, "2 поток");
+            outputStudentNameConsoleSynchronously(6, "2 поток");
+        }).start();
+        return "Вывод в параллельном синхронном режиме в консоль 6 имен студентов совершен";
+    }
+
+    public void outputStudentNameConsole(int number, String flow) {
+        logger.debug("Вывод {} - элемента в {} на консоль в несинхронном режиме из таблицы student" +
+                " - (outputStudentNameConsole({} , {})", number, flow, number, flow);
+        count++;
+        System.out.println(studentRepository.findAll().get(number - 1).getName() + " - "
+                + number + " элемент (" + flow + "); счетчик - " + count);
+        try {
+            Thread.sleep(10);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void outputStudentNameConsoleSynchronously(int number, String flow) {
+        logger.debug("Вывод {} - элемента в {} на консоль в синхронном режиме из таблицы student" +
+                " - (outputStudentNameConsoleSynchronously({} , {})", number, flow, number, flow);
+        synchronized (flag) {
+            count++;
+            System.out.println(studentRepository.findAll().get(number - 1).getName() + " - "
+                    + number + " элемент (" + flow + "); счетчик - " + count);
+        }
+        try {
+            Thread.sleep(10);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+
+        }
     }
 }
