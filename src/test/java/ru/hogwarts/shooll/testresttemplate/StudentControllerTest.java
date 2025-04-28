@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.Objects;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+
 @ActiveProfiles(value = "test")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class StudentControllerTest {
@@ -112,9 +113,9 @@ public class StudentControllerTest {
     }
 
     @Test
-        public void getCountTest() throws Exception {
-       Integer count = testRestTemplate.getForObject(baseUrl + port + "/student/count", Integer.class);
-       assertThat(count).isEqualTo(2);
+    public void getCountTest() throws Exception {
+        Integer count = testRestTemplate.getForObject(baseUrl + port + "/student/count", Integer.class);
+        assertThat(count).isEqualTo(2);
     }
 
     @Test
@@ -130,4 +131,17 @@ public class StudentControllerTest {
         return testRestTemplate.postForEntity(baseUrl + port + "/student", student, Student.class).getBody();
     }
 
+    @Test
+    public void getSynchronouslyStudentsTest() throws Exception {
+        String answerEtalon = "Вывод в параллельном синхронном режиме в консоль 6 имен студентов совершен";
+        String answer = testRestTemplate.getForObject(baseUrl + port + "/student/print-synchronized", String.class);
+        assertThat(answer).isEqualTo(answerEtalon);
+    }
+
+    @Test
+    public void getStudentParallelTest() throws Exception {
+        String answerEtalon = "Вывод в параллельном несинхронном режиме в консоль 6 имен студентов совершен";
+        String answer = testRestTemplate.getForObject(baseUrl + port + "/student/print-parallel", String.class);
+        assertThat(answer).isEqualTo(answerEtalon);
+    }
 }
