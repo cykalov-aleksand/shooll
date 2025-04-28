@@ -8,9 +8,8 @@ import ru.hogwarts.shooll.model.Student;
 import ru.hogwarts.shooll.repository.AvatarRepository;
 import ru.hogwarts.shooll.repository.StudentRepository;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 public class StudentService {
@@ -22,7 +21,7 @@ public class StudentService {
         this.studentRepository = studentRepository;
     }
 
-    private int count;
+    private AtomicInteger count = new AtomicInteger();
     private Object flag = new Object();
     private static final Logger logger = LoggerFactory.getLogger(StudentService.class);
 
@@ -123,16 +122,17 @@ public class StudentService {
     public String getStudentParallel() {
         logger.info("Был вызван метод несинхронного параллельного вывода имен 6 студентов с таблицы student в консоль" +
                 " - (getStudentParallel())");
-        count = 0;
-        outputStudentNameConsole(1, "основной поток");
-        outputStudentNameConsole(2, "основной поток");
+        count.set(0);
+        Queue<Student> queue = new LinkedList<>(studentRepository.findAll());
+        outputStudentNameConsole(queue, "основной поток");
+        outputStudentNameConsole(queue, "основной поток");
         new Thread(() -> {
-            outputStudentNameConsole(3, "1 поток");
-            outputStudentNameConsole(4, "1 поток");
+            outputStudentNameConsole(queue, "1 поток");
+            outputStudentNameConsole(queue, "1 поток");
         }).start();
         new Thread(() -> {
-            outputStudentNameConsole(5, "2 поток");
-            outputStudentNameConsole(6, "2 поток");
+            outputStudentNameConsole(queue, "2 поток");
+            outputStudentNameConsole(queue, "2 поток");
         }).start();
         return "Вывод в параллельном несинхронном режиме в консоль 6 имен студентов совершен";
     }
@@ -140,26 +140,26 @@ public class StudentService {
     public String getSynchronouslyStudents() {
         logger.info("Был вызван метод синхронного параллельного вывода имен 6 студентов с таблицы student в консоль" +
                 " - (getSynchronouslyStudents())");
-        count = 0;
-        outputStudentNameConsoleSynchronously(1, "основной поток");
-        outputStudentNameConsoleSynchronously(2, "основной поток");
+        count.set(0);
+        Queue<Student> queue = new LinkedList<>(studentRepository.findAll());
+        outputStudentNameConsoleSynchronously(queue, "основной поток");
+        outputStudentNameConsoleSynchronously(queue, "основной поток");
         new Thread(() -> {
-            outputStudentNameConsoleSynchronously(3, "1 поток");
-            outputStudentNameConsoleSynchronously(4, "1 поток");
+            outputStudentNameConsoleSynchronously(queue, "1 поток");
+            outputStudentNameConsoleSynchronously(queue, "1 поток");
         }).start();
         new Thread(() -> {
-            outputStudentNameConsoleSynchronously(5, "2 поток");
-            outputStudentNameConsoleSynchronously(6, "2 поток");
+            outputStudentNameConsoleSynchronously(queue, "2 поток");
+            outputStudentNameConsoleSynchronously(queue, "2 поток");
         }).start();
         return "Вывод в параллельном синхронном режиме в консоль 6 имен студентов совершен";
     }
 
-    public void outputStudentNameConsole(int number, String flow) {
+    public void outputStudentNameConsole(Queue<Student> queue, String flow) {
         logger.debug("Вывод {} - элемента в {} на консоль в несинхронном режиме из таблицы student" +
-                " - (outputStudentNameConsole({} , {})", number, flow, number, flow);
-        count++;
-        System.out.println(studentRepository.findAll().get(number - 1).getName() + " - "
-                + number + " элемент (" + flow + "); счетчик - " + count);
+                " - (outputStudentNameConsole({} , {})", queue.peek().getId(), flow, queue.peek().getId(), flow);
+        System.out.println(queue.peek().getName() + " - "
+                + queue.poll().getId() + " элемент (" + flow + "); счетчик - " + count.incrementAndGet());
         try {
             Thread.sleep(10);
         } catch (InterruptedException e) {
@@ -167,13 +167,12 @@ public class StudentService {
         }
     }
 
-    private void outputStudentNameConsoleSynchronously(int number, String flow) {
+    private void outputStudentNameConsoleSynchronously(Queue<Student> queue, String flow) {
         logger.debug("Вывод {} - элемента в {} на консоль в синхронном режиме из таблицы student" +
-                " - (outputStudentNameConsoleSynchronously({} , {})", number, flow, number, flow);
+                " - (outputStudentNameConsoleSynchronously({} , {})", queue.peek().getId(), flow, queue.peek().getId(), flow);
         synchronized (flag) {
-            count++;
-            System.out.println(studentRepository.findAll().get(number - 1).getName() + " - "
-                    + number + " элемент (" + flow + "); счетчик - " + count);
+            System.out.println(queue.peek().getName() + " - "
+                    + queue.poll().getId() + " элемент (" + flow + "); счетчик - " + count.incrementAndGet());
         }
         try {
             Thread.sleep(10);
