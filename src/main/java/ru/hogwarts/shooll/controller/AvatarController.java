@@ -31,9 +31,12 @@ public class AvatarController {
     @PostMapping(value = "/{id}/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Загружаем Avatar для студента с указанным ID студента")
     public ResponseEntity<String> uploadAvatar(@PathVariable Long id, @RequestParam MultipartFile avatar) throws IOException {
+        //проверяем условие если загруженная картинка превышает или равно размеру (1024*300) байт, то в тело запроса
+        //заносим сообщение "File is to big"
         if (avatar.getSize() >= 1024 * 300) {
             return ResponseEntity.badRequest().body("File is to big");
         }
+        // иначе выполняем метод
         avatarService.uploadAvatar(id, avatar);
         return ResponseEntity.ok().build();
     }
@@ -41,12 +44,14 @@ public class AvatarController {
     @GetMapping(value = "/{id}/avatar/preview")
     @Operation(summary = "Просмотр Avatar-ки загруженной в таблицу по указанному ID студента")
     public ResponseEntity<byte[]> downloadAvatar(@PathVariable Long id) {
+
         Avatar avatar = avatarService.findAvatar(id);
-
         HttpHeaders headers = new HttpHeaders();
+        //устанавливаем в заголовке тип содержимого ответа
         headers.setContentType(MediaType.parseMediaType(avatar.getMediaType()));
+        //устанавливаем объем содержимого ответа
         headers.setContentLength(avatar.getData().length);
-
+        // отправляем ответ на запрос с заголовком ответа headers и телом вывода avatar.getData()
         return ResponseEntity.status(HttpStatus.OK).headers(headers).body(avatar.getData());
     }
 
@@ -54,9 +59,9 @@ public class AvatarController {
     @Operation(summary = "Просмотр Avatar-ки для студента с указанным ID из директории")
     public void downloadAvatarFile(@PathVariable Long id, HttpServletResponse response) throws IOException {
         Avatar avatar = avatarService.findAvatar(id);
-
+        //определяем путь к загруженному файлу
         Path path = Path.of(avatar.getFilePath());
-
+// производим чтение в потоке загруженного файла и вывод его в браузер с последующим закрытием потока
         try (InputStream is = Files.newInputStream(path);
              OutputStream os = response.getOutputStream()) {
             response.setStatus(200);
@@ -68,6 +73,7 @@ public class AvatarController {
 
     @GetMapping("/printPage")
     @Operation(summary = "Пагинация для AvatarService")
+    //производим запрос по пагинации с указанными данными, по умолчанию устанавливаем page=1, size=1
     public Collection<EntityListAvatar> getAvatarInfo(@RequestParam(defaultValue = "1") int page,
                                                       @RequestParam(defaultValue = "1") int size) {
         return avatarService.getFindAvatarAll(page, size);

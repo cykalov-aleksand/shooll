@@ -60,24 +60,28 @@ public class FacultyService {
         logger.info("Был вызван метод поиска списка названий факультета имеющих максимальную длину" +
                 " - getMaxNameFaculty())");
         List<String> list = new ArrayList<>();
+        //производим поиск факультета с максимальной длиной названия факультета
         String name = facultyRepository.findAll().stream().parallel().max(Comparator.comparing(o -> o.getName()
                 .length())).map(Faculty::getName).get();
         if (name.isBlank()) {
             list.add("Таблица пуста");
             return list;
         }
+        //производим поиск названий факультета с заданной длиной названия
         list = facultyRepository.findAll().stream().map(Faculty::getName)
                 .filter(oName -> oName.length() == name.length()).toList();
         return list;
     }
 
     public long sum() {
+        //производим оценку времени выполнения потока
         long startTime = System.currentTimeMillis();
         long sum1 = LongStream.iterate(1, a -> a + 1).limit(1_000_000).reduce(0, Long::sum);
         long endTime = System.currentTimeMillis();
         long time1 = (endTime - startTime);
         startTime = System.currentTimeMillis();
         long sum2 = 0;
+        //производим оценку времени выполнения цикла
         for (int number = 1; number <= 1_000_000; number++) {
             sum2+=number;
         }
@@ -86,6 +90,5 @@ public class FacultyService {
         logger.info("время отработки последовательного стрима= {} мс. Время отработки в цикле= {} мс. ", time1, time2);
         logger.info(" последовательный поток sum1= {}; вычисление с помощью цикла sum2= {}; ", sum1, sum2);
         return sum2;
-
     }
 }

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/port")
 public class InfoControllerPort {
+    //читаем переменную server.port с конфигурационного файла
     @Value("${server.port}")
     private String port;
     @GetMapping

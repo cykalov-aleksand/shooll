@@ -38,12 +38,17 @@ public class AvatarService {
     }
 
     public void uploadAvatar(long studentId, MultipartFile file) throws IOException {
+        //производим поиск студента по указанному studentId
         Student student = studentService.findStudent(studentId);
+        //производим переименование файла file в id.<тип файла>
         Path filePath = Path.of(coversDir, studentId + "." + getExtension(file.getOriginalFilename()));
         logger.info("Был вызван метод привязки картинки {} в БД к ID студента - {} - (uploadAvatar({}, {}))",
                 file.getOriginalFilename(), studentId,studentId,file.getOriginalFilename());
+        //создаем директорию из filePath.getParent()
         Files.createDirectories(filePath.getParent());
+        //удаляем файл если он существует
         Files.deleteIfExists(filePath);
+        //создаем поток чтения и записи указанного файла с последующим закрытием указанных потоков
         try (InputStream is = file.getInputStream();
              OutputStream os = Files.newOutputStream(filePath, CREATE_NEW);
              BufferedInputStream bis = new BufferedInputStream(is, 1024);
@@ -51,6 +56,7 @@ public class AvatarService {
         ) {
             bis.transferTo(bos);
         }
+        //заносим информацию о студенте и картинке в базу данных
         Avatar avatar = findStudentAvatar(studentId);
         avatar.setStudent(student);
         avatar.setFilePath(filePath.toString());
@@ -74,15 +80,18 @@ public class AvatarService {
     private byte[] generateImagePreview(Path filepath) throws IOException {
         logger.debug("Был вызван метод преобразования оригинальной картинки по адресу - {}, " +
                 "в формат пригодный для сохранения в БД", filepath);
+        //открываем поток чтения картинки и поток записи картинки, проводим обработку оригинальной картинки и выдачу обработанной
         try (InputStream is = Files.newInputStream(filepath);
              BufferedInputStream bis = new BufferedInputStream(is, 1024);
              org.apache.tomcat.util.http.fileupload.ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
             BufferedImage image = ImageIO.read(bis);
+            //уменьшаем размеры картинки в 100 раз
             int height = image.getHeight() / (image.getWidth() / 100);
             BufferedImage preview = new BufferedImage(100, height, image.getType());
             Graphics2D graphics = preview.createGraphics();
             graphics.drawImage(image, 0, 0, 100, height, null);
             graphics.dispose();
+            //производим запись полученной картинки в переменную baos
             ImageIO.write(preview, getExtension(filepath.getFileName().toString()), baos);
             return baos.toByteArray();
         }
@@ -94,6 +103,7 @@ public class AvatarService {
     }
 
     public Collection<EntityListAvatar> getFindAvatarAll(int page, int size) {
+        //проверяем если введенные значения меньше 1 присваиваем им значения равные 1
         if (page < 1) {
             page = 1;
         }

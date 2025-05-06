@@ -20,9 +20,10 @@ public class StudentService {
         this.avatarRepository = avatarRepository;
         this.studentRepository = studentRepository;
     }
-
-    private AtomicInteger count = new AtomicInteger();
-    private Object flag = new Object();
+    //вводим переменную count для работы с параллельными потоками
+    private final AtomicInteger count = new AtomicInteger();
+    //вводим объект flag для синхронизации работы параллельных потоков
+    private final Object flag = new Object();
     private static final Logger logger = LoggerFactory.getLogger(StudentService.class);
 
     public Collection<Student> findStudentAll() {
@@ -42,7 +43,9 @@ public class StudentService {
     }
 
     public void deleteStudent(long id) {
+        //производим удаления картинки по id с таблицы avatar
         avatarRepository.deleteById(id);
+        //производим удаление студента по id из таблицы student
         studentRepository.deleteById(id);
         logger.info("Был выполнен метод удаления студента с таблицы student  и avatar к нему с" +
                 " ID:{} - (deleteStudent({}))", id, id);
@@ -60,12 +63,15 @@ public class StudentService {
     }
 
     public Collection<Student> findByAgeBetween(int min, int max) {
+        //если max равен 0, выводим весь список студентов
         if (max == 0) {
             return findStudentAll();
         }
+        // если max=min выводим список студентов по указанному возрасту
         if (max == min) {
             return findByAge(max);
         }
+        //выводим список студентов в указанном интервале
         List<Student> between = new ArrayList<>();
         for (Student value : findByAgeGreatThen(min)) {
             if (value.getAge() <= max) {
@@ -111,10 +117,12 @@ public class StudentService {
     public double getAverAge() {
         logger.info("Был вызван метод вычисления среднего возраста студентов в таблице student " +
                 " - getAverAge())");
+        //если таблица пуста выводим 0
         long count = studentRepository.findAll().size();
         if (count == 0) {
             return 0;
         }
+        //производим вычисление среднего возраста студентов
         int sum = studentRepository.findAll().stream().parallel().mapToInt(Student::getAge).sum();
         return (double) sum / count;
     }
@@ -160,6 +168,7 @@ public class StudentService {
                 " - (outputStudentNameConsole({} , {})", queue.peek().getId(), flow, queue.peek().getId(), flow);
         System.out.println(queue.peek().getName() + " - "
                 + queue.poll().getId() + " элемент (" + flow + "); счетчик - " + count.incrementAndGet());
+        //вводим задержку времени для обеспечения перехода между потоками
         try {
             Thread.sleep(10);
         } catch (InterruptedException e) {
@@ -174,6 +183,7 @@ public class StudentService {
             System.out.println(queue.peek().getName() + " - "
                     + queue.poll().getId() + " элемент (" + flow + "); счетчик - " + count.incrementAndGet());
         }
+        //вводим задержку времени для обеспечения перехода между потоками
         try {
             Thread.sleep(10);
         } catch (InterruptedException e) {

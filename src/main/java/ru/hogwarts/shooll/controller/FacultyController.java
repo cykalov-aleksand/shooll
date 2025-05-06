@@ -51,19 +51,24 @@ public class FacultyController {
     @Operation(summary = "Проводим поиск факультета по указанному id")
     public ResponseEntity<Faculty> getFacultyInfoId(@PathVariable Long id) {
         Faculty faculty = facultyService.findFaculty(id);
+        // проводим проверку ответа метода, при ответе null возвращает статус ответа 404 и пустое тело ответа
         if (faculty == null) {
             return ResponseEntity.notFound().build();
         }
+        //отправляем ответ на запрос если faculty not null
         return ResponseEntity.ok(faculty);
     }
 
     @GetMapping("/color")
     @Operation(summary = "Проводим поиск факультета по названию или цвету")
+    //отправляем запрос в котором параметры name и color могут быть пустыми
     public ResponseEntity<Collection<Faculty>> findFacultyOrColor(@RequestParam(required = false) String name,
                                                                   @RequestParam(required = false) String color) {
+        //в случае если один из параметров не равен null производим поиск по полям
         if ((name != null && !name.isBlank()) || (color != null && !color.isBlank())) {
             return ResponseEntity.ok(facultyService.findByNameOrColor(name, color));
         }
+        // в противном случае, выводим пустой список
         return ResponseEntity.ok(Collections.emptyList());
     }
 

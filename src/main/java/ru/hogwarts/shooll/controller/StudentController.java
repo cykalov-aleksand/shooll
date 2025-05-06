@@ -43,16 +43,20 @@ public class StudentController {
 
     @GetMapping
     @Operation(summary = "В случае если введено значение min>max данные значения меняются местами")
+    // формируем запрос, параметрам min и max в случае отсутствия значений присваиваем 0 значения
     public ResponseEntity<Collection<Student>> getStudentInfo(@RequestParam(defaultValue = "0") int min,
                                                               @RequestParam(defaultValue = "0") int max) {
+        //если min>max меняем значения местами
         if (min > max) {
             int revers = max;
             max = min;
             min = revers;
         }
+        //если min>=0 выводим список
         if (min >= 0) {
             return ResponseEntity.ok(studentService.findByAgeBetween(min, max));
         }
+        // в противном случае выводим пустой список
         return ResponseEntity.ok(Collections.emptyList());
     }
 
@@ -94,6 +98,7 @@ public class StudentController {
     public Collection<String> filterStudentName(){
         return studentService.aGetFilterStudentName();
     }
+
     @GetMapping("/averAge")
     @Operation(summary = "Вычисляем средний возраст студентов из списка findAll")
     public double getAverAge(){
